@@ -10,6 +10,6 @@ export const getPopularMovies = async () => {
     return response.data.results;
   } catch (error) {
     console.error("Error fetching popular movies:", error);
-    return [];
+    //return [];
   }
 };
