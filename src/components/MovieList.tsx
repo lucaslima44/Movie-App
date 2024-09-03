@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
-import { getPopularMovies } from "../service/movieApiService";
+import { getPopularMovies } from "../services/movieApiService";
 import { Movie } from "../types/Movie";
 import { MovieCard } from "./MovieCard";
+import { Modal } from "./Modal";
 
 export function MovieList() {
   const [movies, setMovies] = useState<Movie[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -14,6 +17,11 @@ export function MovieList() {
     fetchMovies();
   }, []);
 
+  function handleMovieCardClick(movie: Movie) {
+    setSelectedMovie(movie);
+    setIsModalOpen(true);
+  }
+
   return (
     <div>
       <h1 className="text-4xl font-semibold">Popular Movies</h1>
@@ -22,9 +30,22 @@ export function MovieList() {
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-16">
         {movies.map((movie: Movie) => (
-          <MovieCard key={movie.id} movie={movie} />
+          <MovieCard
+            key={movie.id}
+            movie={movie}
+            onSelect={() => handleMovieCardClick(movie)}
+          />
         ))}
       </div>
+
+      <Modal isOpen={isModalOpen} 
+      onClose={() => setIsModalOpen(false)}>
+        {selectedMovie  && (
+          <div className="bg-white">
+            <h2 className="text-2xl font-bold">{selectedMovie.title}</h2>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }
